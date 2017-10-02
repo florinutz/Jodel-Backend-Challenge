@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+
+  web:
+    container_name: node
+    build: .
+    image: florinutz:jodel_web
+    ports:
+      - "3000:80"
+    volumes:
+      - "./app:/src/app"
+    links:
+      - mongo
+      - redis
+    environment:
+      DATABASE_URL: mongodb://mongo:27017/jodel_dev
+
+  mongo:
+    image: mongo
+    volumes:
+      - db-data:/data/db
+    ports:
+      - "27017:27017"
+
+  redis:
+    image: redis:4-alpine
+    ports:
+      - "6379"
+
+volumes:
+  db-data:
