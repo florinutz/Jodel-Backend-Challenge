@@ -1,9 +1,9 @@
 {
-  "name": "jodel-backend-app",
+  "name": "nodel",
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "/src/node_modules/.bin/nodemon -L /src/app/bin/www",
+    "start": "node_modules/.bin/nodemon -L app/bin/www",
     "test": "mocha"
   },
   "dependencies": {

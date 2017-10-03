@@ -12,4 +12,4 @@ let CatSchema = new Schema(
     }
 );
 
-module.exports = mongoose.model('cat', CatSchema);
+module.exports = mongoose.model('Cat', CatSchema);

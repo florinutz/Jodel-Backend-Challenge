@@ -5,7 +5,7 @@ services:
   web:
     container_name: node
     build: .
-    image: florinutz:jodel_web
+    image: florinutz:nodel
     ports:
       - "3000:80"
     volumes:

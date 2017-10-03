@@ -1,6 +1,5 @@
 {
-  "watch": [ "app", "config" ],
-  "verbose": true,
+  "watch": [ "app", "config", "test" ],
   "env": {
     "NODE_ENV": "dev"
   },
