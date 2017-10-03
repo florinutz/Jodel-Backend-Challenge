@@ -11,7 +11,7 @@ const cat = require('./route/cat');
 
 const app = require('express')();
 
-mongoose.connect(config.DBHost, { useMongoClient: true, promiseLibrary: global.Promise });
+mongoose.connect(config.DBHost, { useMongoClient: true });
 let db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 
@@ -40,7 +40,7 @@ let cacheWithRedis = apicache.options({
 let shouldBeCached = (req, res) => {
     return res.statusCode === 200 && !testing;
 };
-const cache = cacheWithRedis('5 minutes', shouldBeCached);
+const cache = cacheWithRedis('10 seconds', shouldBeCached);
 
 app.route("/cat")
     .get(cache, cat.getCats)
