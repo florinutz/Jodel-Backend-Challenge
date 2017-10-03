@@ -3,14 +3,22 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "nodemon app/bin/www"
+    "start": "/src/node_modules/.bin/nodemon -L /src/app/bin/www",
+    "test": "mocha"
   },
   "dependencies": {
     "debug": "~2.2.0",
     "express": "~4.15.5",
-    "mongodb": "^2.2.31",
+    "mongoose": "^4.11.14",
     "redis": "^2.8.0",
     "morgan": "^1.9.0",
-    "body-parser": "^1.18.2"
+    "body-parser": "^1.18.2",
+    "config": "^1.26.2"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-http": "^3.0.0",
+    "mocha": "^3.5.3",
+    "nodemon": "^1.12.1"
   }
 }

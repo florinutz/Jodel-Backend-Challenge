@@ -13,8 +13,6 @@ services:
     links:
       - mongo
       - redis
-    environment:
-      DATABASE_URL: mongodb://mongo:27017/jodel_dev
 
   mongo:
     image: mongo
