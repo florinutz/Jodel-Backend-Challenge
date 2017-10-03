@@ -1,10 +1,13 @@
-process.title = 'catApp';
+process.title = 'catapp';
 
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
-const cat = require('./route/cat');
 const config = require('config');
+const redis = require('redis');
+const apicache = require('apicache');
+
+const cat = require('./route/cat');
 
 const app = require('express')();
 
@@ -14,17 +17,33 @@ db.on('error', console.error.bind(console, 'connection error:'));
 
 // The enviroment variable NODE_ENV is test against test to disable morgan log in the command line
 // or it would interfere with the test output.
-if (config.util.getEnv('NODE_ENV') !== 'test') {
+let testing = config.util.getEnv('NODE_ENV') === 'test';
+if (!testing) {
     app.use(morgan('combined')); //'combined' outputs the Apache style logs
 }
 
 app.use(bodyParser.json());
 app.use(bodyParser.json({ type: 'application/json'}));
 
-app.get("/", (req, res) => res.json({message: "try /cat"}) );
+app.get("/", (req, res) => res.json({message: "better try /cat"}) );
+
+const redisClient = redis.createClient("redis://redis");
+redisClient.on('error', function (err) {
+    console.log('Redis client error: ' + err)
+});
+
+let cacheWithRedis = apicache.options({
+        redisClient: redisClient,
+        headers: { 'cache-control': 'no-cache' }
+    }).middleware;
+
+let shouldBeCached = (req, res) => {
+    return res.statusCode === 200 && !testing;
+};
+const cache = cacheWithRedis('5 minutes', shouldBeCached);
 
 app.route("/cat")
-    .get(cat.getCats)
+    .get(cache, cat.getCats)
     .post(cat.postCat);
 
 module.exports = app;
