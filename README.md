@@ -1,45 +1,33 @@
-# Backend Code Challenge
+[![Build Status](https://travis-ci.org/florinutz/Jodel-Backend-Challenge.svg?branch=master)](https://travis-ci.org/florinutz/Jodel-Backend-Challenge)
 
-Welcome!
+# backend challenge
 
-For this code challenge we would like you to write a simple NodeJS REST API project or just fork one of the existing projects on Github (https://github.com/ealeksandrov/NodeAPI or https://github.com/scotch-io/node-api), and then extend it with some functionalities below.
+## Run the 3 containers in the background on your `docker-machine`
+```bash
+docker-compose up -d --build
+```
 
+## Hit the endpoint with some POSTs
+```bash
+curl -s -H "Content-type: application/json" -d '{"name": "Mittens", "age": 14}' docker-machine:3000/cat | jq
+```
 
-## Adding MongoDB
+## Check out the inserted cats
+```bash
+curl -s "docker-machine:3000/cat" | jq
+```
 
-Write an API endpoint for saving a JSON object in MongoDB. Mongo DB should be running in a Docker Container.
+### Paginate
+```bash
+curl -s "docker-machine:3000/cat?p=2" | jq
+```
 
-- Input:
-  - JSON Object
-- Output:
-  - 200 OK or error code
+### Change the limit per page
+```bash
+curl -s "docker-machine:3000/cat?p=2&n=3" | jq
+```
 
-Write also an API endpoint for getting a list of all previously saved JSON objects filtered by some field’s value, in pages, N objects per page:
-
-- Input:
-  - field’s value
-  - page number
-- Output:
-  - list of JSON objects (no more than N)
-
-
-## Adding Tests
-
-Write end-to-end test(s) for these 2 endpoints.
-
-Tests should be rerunnable and independent of their execution order. Make sure you test the most tricky cases.
-
-
-## Adding Caching
-
-Start Redis in Docker (same way as Mongo) and implement Redis caching for the second endpoint (get list).
-
-
-## Running everything
-
-Ensure that we're able to setup and run everything with a task runner or a similar tool.
-
-
-## How to deliver the results
-
-Fork this repo and once you're done send us a link to a repo with your solution. The result should be your own repository on Github with instructions how to run tests.
+## Tests
+```bash
+docker-compose exec web npm test
+```

@@ -17,11 +17,8 @@ describe('Cats', () => {
         });
     });
 
-    /*
-     * Test the /GET route
-     */
-    describe('/GET cat', _ => {
-        it('it should GET all the cats', (done) => {
+    describe('initial /GET', _ => {
+        it('it should initially GET an array of 0 cats', (done) => {
             chai.request(server)
                 .get('/cat')
                 .end((err, res) => {
@@ -33,35 +30,77 @@ describe('Cats', () => {
         });
     });
 
-    /*
-     * Test the /POST route
-     */
-    describe('/POST cat without name', _ => {
-        it('it should not be able to POST a cat without a name field', (done) => {
+    describe('POST validation & success', _ => {
+        it('missing name field', (done) => {
             let cat = { age: 30 };
             chai.request(server)
                 .post('/cat')
                 .send(cat)
                 .end((err, res) => {
-                    res.should.have.status(200);
+                    res.should.have.status(400);
                     res.body.should.be.a('object');
                     res.body.should.have.property('errors');
                     res.body.errors.name.should.have.property('kind').eql('required');
                     done();
                 });
         });
-        it('it should not be able to POST a cat without an age field', (done) => {
+        it('missing age field', (done) => {
             let cat = { name: 'Mittens' };
             chai.request(server)
                 .post('/cat')
                 .send(cat)
                 .end((err, res) => {
-                    res.should.have.status(200);
+                    res.should.have.status(400);
                     res.body.should.be.a('object');
                     res.body.should.have.property('errors');
                     res.body.errors.age.should.have.property('kind').eql('required');
                     done();
                 });
         });
+        it('malformed age field', (done) => {
+            let cat = { name: 'Mittens', age: "toth" };
+            chai.request(server)
+                .post('/cat')
+                .send(cat)
+                .end((err, res) => {
+                    res.should.have.status(400);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('errors');
+                    res.body.should.have.property('name');
+                    res.body.name.should.be.eql('ValidationError');
+                    done();
+                });
+        });
+        it('valid insert', (done) => {
+            chai.request(server)
+                .post('/cat')
+                .send({ name: "Initial Cat", age: 13 })
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message');
+                    res.body.message.should.be.eql('Cat saved');
+                });
+            done();
+        });
     });
+
+    describe('Playing with GETs', _ => {
+        // save some cats
+        it('saved 14 valid cats', (done) => {
+            for (let i = 1; i <= 14; i++) {
+                chai.request(server)
+                    .post('/cat')
+                    .send({ name: "Successful Cat " + i, age: 2 * i })
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.be.a('object');
+                        res.body.should.have.property('message');
+                        res.body.message.should.be.eql('Cat saved');
+                    });
+            }
+            done();
+        });
+    });
+    // todo test ?p= and ?n=
 });
